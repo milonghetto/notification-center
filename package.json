@@ -1,6 +1,18 @@
 {
-  "name": "notification-center",
-  "version": "0.0.0",
+  "name": "@jtablada/notification-center",
+  "version": "1.0.0",
+  "author": "Johnny Alexander Tablada-Rodriguez",
+  "description": "A notification dispatch mechanism which enables the broadcast of information to registered observers.",
+  "keywords" : [ "angular", "javascript", "typescript",
+                 "component", "service",
+                 "distribute", "distributed",
+                 "message", "messages", "messaging",
+                 "notification", "notifications", "notifier", "notify",
+                 "observe", "observer","observable",
+                 "post", "poster", "posting",
+                 "publish", "publisher", "publishing",
+                 "register", "registering", "remote",
+                 "subject", "subscribe", "subscriber","subscribing", "subscription" ],
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -23,16 +35,14 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "~12.0.5",
     "@angular/cli": "~12.0.0",
     "@angular/compiler-cli": "~12.0.0",
-    "@types/jasmine": "~3.6.0",
     "@types/node": "^12.11.1",
-    "jasmine-core": "~3.7.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.0.3",
-    "karma-jasmine": "~4.0.0",
-    "karma-jasmine-html-reporter": "^1.5.0",
+    "ng-packagr": "^12.0.0",
     "typescript": "~4.2.3"
   }
 }

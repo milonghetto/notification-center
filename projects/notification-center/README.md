@@ -25,20 +25,38 @@ npm install --global @jtablada/notification-center
 ## Usage
 
 ### app.module.ts
+
+Import the service in the file [app.module.ts]() to make it available throughout the application.
+
 ```typescript
 import { NotificationCenterService } from "@jtablada/notification-center";
 
 @NgModule ( { declarations: [ ... ],
-                imports: [ ... ],
-                providers: [ NotificationCenterService ],
-                bootstrap: [ ... ] } )
+              imports: [ ... ],
+              providers: [ NotificationCenterService ],
+              bootstrap: [ ... ] } )
 
 export class AppModule {}
 ```
 
 ### observing-class.component.ts
+
+The component registering for notifications needs to:
+1. Import the NotificationCenterService from "@jtablada/notification-center".
+2. Inject the service into the class via its constructor by passing it as a parameter.
+3. Implement the interface [OnDestroy]():
+   1. Implement the method [ngOnDestroy]().
+   2. Within the method, removing itself by implementing the [removeObserver]() method.
+      1. [this._notificationCenter_.removeObserver ( this );]()
+4. Implement the interface [OnInit]():
+   1. Implement the method [ngOnInit]().
+   2. Register for any or all notifications necessary implementing any form of the overloaded method [addObserver]().
+
+Throughout the component, one may add and remove the component to the notification center as needed based on
+application architecture needs and business rules.
+
 ```typescript
-import { Component } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Notification,
          NotificationCenterService } from "@jtablada/notification-center";
 import { MessagingClassComponent } from "./messaging-class.component";
@@ -136,28 +154,38 @@ export class MessagingClassComponent
 
     public someMethod () : void
     {
-        // Use this form to send a notification object.
+        // Use this form to send a packaged notification object.
         const notification : Notification = { name   : MessagingClassComponent.MESSAGE_CONSTANT,
                                               sender : this };
+
         this._notificationCenter.postNotification ( notification );
 
-        // Use this form to send custom data within the notification.
+        // Use this form to send custom data within the packaged notification.
         const userInfo : UserInfo = { 'age'    : 25,
                                       'address': '123 Main Street',
                                       'list'   : [ 'a', 'b', 'c' ] };
+
         notification = { name     : MessagingClassComponent.MESSAGE_CONSTANT,
                          sender   : this,
                          userInfo : userInfo };
+
         this._notificationCenter_.postNotification ( notification );
-                                      
+
+        this._notificationCenter_.postNotification ( MessagingClassComponent.MESSAGE_CONSTANT,
+                                                     this );
+
+        this._notificationCenter_.postNotification ( MessagingClassComponent.MESSAGE_CONSTANT,
+                                                     this,
+                                                     userInfo );
     }
 }
 ```
 
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+### container-class.html
+```html
+<app-messaging-class #messagingComponent></app-messaging-class>
 
-Please make sure to update tests as appropriate.
-
+<app-observing-class [notifying-class]="messagingComponent"></app-observing-class>
+```
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
