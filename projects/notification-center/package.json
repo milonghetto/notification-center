@@ -1,11 +1,75 @@
 {
-  "name": "notification-center",
-  "version": "0.0.1",
-  "peerDependencies": {
-    "@angular/common": "^12.0.5",
-    "@angular/core": "^12.0.5"
-  },
-  "dependencies": {
-    "tslib": "^2.1.0"
-  }
+    "name": "@jtablada/notification-center",
+    "version": "1.0.5",
+    "author": "Johnny Alexander Tablada-Rodríguez",
+    "contributors": [
+        {
+            "name": "Johnny Alexander Tablada-Rodríguez",
+            "email": "alexandertablada@hotmail.com"
+        }
+    ],
+    "description": "A notification dispatch mechanism which enables the broadcast of information to registered observers.",
+    "license": "MIT",
+    "private": false,
+    "keywords": [
+        "angular",
+        "javascript",
+        "typescript",
+        "component",
+        "components",
+        "service",
+        "services",
+        "distribute",
+        "distributed",
+        "distributes",
+        "emitter",
+        "emitters",
+        "event",
+        "events",
+        "message",
+        "messages",
+        "messaging",
+        "ngrx",
+        "node",
+        "NotificationCenter",
+        "NotificationCenterService",
+        "notificating",
+        "notification",
+        "notifications",
+        "notifier",
+        "notifies",
+        "notify",
+        "observable",
+        "observe",
+        "observer",
+        "observes",
+        "observing",
+        "post",
+        "poster",
+        "posting",
+        "posts",
+        "publish",
+        "publisher",
+        "publishes",
+        "publishing",
+        "react",
+        "register",
+        "registering",
+        "registers",
+        "remote",
+        "rxjs",
+        "subject",
+        "subscribe",
+        "subscriber",
+        "subscribing",
+        "subscription"
+    ],
+    "main": "src/notification-center.service.ts",
+    "peerDependencies": {
+        "@angular/common": "^12.0.5",
+        "@angular/core": "^12.0.5"
+    },
+    "dependencies": {
+        "tslib": "^2.1.0"
+    }
 }

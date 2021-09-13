@@ -4,7 +4,7 @@ A notification dispatch mechanism which enables the broadcast of information to 
 
 ## Overview
 
-Components register with the notification center to receive notifications [(Notification objects)]() using the [addObserver]() set of overloaded methods.  When a component adds itself as an observer, it specifies which notification(s) it should receive.  A component may, therefore, call this method several times in order to register itself, as an observer, for several different notifications.
+Components register with the notification center to receive notifications (`Notification` objects) using the `addObserver()` set of overloaded methods.  When a component adds itself as an observer, it specifies which notification(s) it should receive.  A component may, therefore, call this method several times in order to register itself, as an observer, for several different notifications.
 
 Components may also post notifications via the notification center to have these notifications delivered to those components which have all-ready registered with the notification center to receive notifications.
 
@@ -12,7 +12,7 @@ A notification center may deliver notifications only within the application in w
 
 ## Installation
 
-Use the Node Package Manager [npm](https://nodejs.org/en/), which comes packaged with node.js, to install NotificationCenterService:
+Use the Node Package Manager, [npm](https://nodejs.org/), which comes packaged with [node.js](https://nodejs.org/), to install NotificationCenterService:
 
 ```bash
 npm install --save @jtablada/notification-center
@@ -22,12 +22,30 @@ or
 npm install --global @jtablada/notification-center
 ```
 
+## Details
+
+The service, [NotificationCenterService](), is made-up of three (3) methods, each of which is overloaded and which has
+a particular usage:
+1. `addObserver()`
+   1. `addObserver ( observer, handler )` <br /> Registers the [observer]() to be notified, via the [handler]() method, of any [Notification]() posted by any sender.
+   2. `addObserver ( observer, handler, name )` <br /> Registers the [observer]() to be notified, via the [handler]() method, of any [Notification]() the [name]() posted by any sender.
+   3. `addObserver ( observer, handler, name, sender )` <br /> Registers the [observer]() to be notified, via the [handler]() method, of any notification with the [name]() posted by a specific [sender]().
+   4. `addObserver ( observer, handler, null, sender )` <br /> Registers the [observer]() to be notified, via the [handler]() method, of any notification with any name posted by a specific [sender]().
+2. `removeObserver()`
+   1. `removeObserver ( observer )` <br /> Removes the [observer]() from the list of observers registered to receive notifications posted by any sender.  Best used inside the method [ngOnDestroy()]().
+   2. `removeObserver ( observer, name )` <br />Removes the [observer]() from the list of observers registered to receive notifications with the [name]() posted by any sender.  Use anywhere outside the method [ngOnDestroy]().
+   3. `removeObserver ( observer, message, sender )` <br /> Removes the [observer]() from the list of observers registered to receive notifications with the [name]() posted by [sender]().  Use anywhere outside the method [ngOnDestroy]().
+   4. `removeObserver ( observer, null, sender )` <br /> Removes the [observer]() from the list of observers registered to received all notifications posted by [sender]().  Use anywhere outside the method [ngOnDestroy]().
+3. `postNotification()`
+   1. `postNotification ( notification )` <br /> A convenience method which posts a [Notification]() object.  The [Notification]() object contains the name, the sender, and an optional [UserInfo]() object, through which custom data may be passed by the sender to all observers.
+   2. `postNotification ( name, sender )` <br /> Posts a notification made-up of only the name and a reference to the sender.
+   3. `postNotification ( name, sender, userinfo )` <br /> Posts a notification made-up of the name, the reference to the sender, and custom information passed along in the notification.  The [userinfo]() parameter is of type [UserInfo](), which is an object of key-value pairs.
+   
 ## Usage
 
 ### app.module.ts
-
-Import the service in the file [app.module.ts]() to make it available throughout the application.
-
+Import the service, `NotificationCenterService`, into the file `app.module.ts`, and add it to the [providers]()
+array to make it available throughout the application.
 ```typescript
 import { NotificationCenterService } from "@jtablada/notification-center";
 
@@ -39,153 +57,270 @@ import { NotificationCenterService } from "@jtablada/notification-center";
 export class AppModule {}
 ```
 
-### observing-class.component.ts
-
-The component registering for notifications needs to:
-1. Import the NotificationCenterService from "@jtablada/notification-center".
-2. Inject the service into the class via its constructor by passing it as a parameter.
-3. Implement the interface [OnDestroy]():
-   1. Implement the method [ngOnDestroy]().
-   2. Within the method, removing itself by implementing the [removeObserver]() method.
-      1. [this._notificationCenter_.removeObserver ( this );]()
-4. Implement the interface [OnInit]():
-   1. Implement the method [ngOnInit]().
-   2. Register for any or all notifications necessary implementing any form of the overloaded method [addObserver]().
-
-Throughout the component, one may add and remove the component to the notification center as needed based on
-application architecture needs and business rules.
-
+### Posting notifications
+In any component from which `Notification`(s) will be posted:
 ```typescript
-import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Notification,
          NotificationCenterService } from "@jtablada/notification-center";
-import { MessagingClassComponent } from "./messaging-class.component";
+```
 
-@Component ( { selector: 'app-observing-class',
-               templateUrl: './app-observing-class.html',
-               styleUrls: [ './app-observing-class.css' ] } )
-
-export class ObservingClassComponent extends OnDestroy,
-                                             OnInit
+```typescript
+constructor ( private notificationCenter : NotificationCenterService )
 {
-    @Input ( 'notifying-class' ) notifyingClassRef : NotifyingClass | null = null;
+}
+```
 
-    private readonly _notificationCenter_ : NotificationCenter;
+```typescript
+this.notificationCenter.postNotification ( 'ServerFailedToConnect',
+                                           this );
+```
 
-    constructor ( notificationCenter : NotificationCenter )
+```typescript
+const notification : Notification = { name   : 'ServerFailedToConnect',
+                                      sender : this };
+
+this.notificationCenter.postNotification ( notification );
+```
+
+```typescript
+const userInfo : UserInfo = {};
+
+userInfo [ 'products' ] = [ { id       : 0,
+                              name     : 'product 01',
+                              quantity : 15 },
+
+                            { id       : 17,
+                              name     : 'product 02',
+                              quantity : 32 } ];
+
+this.notificationCenter.postNotification ( 'ProductsSuccessfullyLoaded',
+                                           this,
+                                           userInfo );
+```
+
+```typescript
+const userInfo : UserInfo = {};
+
+userInfo [ 'products' ] = [ { id       : 0,
+                              name     : 'product 01',
+                              quantity : 15 },
+
+                            { id       : 17,
+                              name     : 'product 02',
+                              quantity : 32 } ];
+
+const notification : Notification = { name     : 'ProductsSuccessfullyLoaded',
+                                      sender   : this,
+                                      userInfo : userInfo };
+
+this.notificationCenter.postNotification ( notification );
+```
+
+### Registering for notifications
+```typescript
+import { OnInit } from "@angular/core";
+import { Notification,
+         NotificationCenterService } from "@jtablada/notification-center";
+```
+
+```typescript
+constructor ( private notificationCenter : NotificationCenterService )
+{
+}
+```
+
+```typescript
+ngOnInit () : void
+{
+    this.notificationCenter.addObserver ( this,
+                                          this.notificationHandler );
+}
+
+public notificationHandler ( notification : Notification ) : void
+{
+    if ( notification.name === 'ProductsSuccessfullyLoaded' )
     {
-        this._notificationCenter_ = NotificationCenter;
+    }
+    else if ( notification.name === 'ServerFailedToConnect' )
+    {
+    }
+}
+```
+
+```typescript
+ngOnInit () : void
+{
+    this.notificationCenter.addObserver ( this,
+                                          this.productsHandler,
+                                          'ProductsSuccessfullyLoaded' );
+
+    this.notificationCenter.addObserver ( this,
+                                          this.serverHandler,
+                                          'ServerFailedToConnect' );
+}
+
+public productsHandler ( notification : Notification ) : void
+{
+}
+
+public serverHandler ( notification : Notification ) : void
+{
+}
+```
+
+### Registering for notifications posted by a particular component
+
+```
+<app-product-list #productList></app-product-list>
+
+<app-shopping-cart [products]="productList"></app-shopping-cart>
+```
+
+```typescript
+import { Component } from "@angular/core";
+import { Notification,
+         NotificationCenterService } from "@jtablada/notification-center";
+
+export type Product = { name     : string;
+                        price    : number;
+                        quantity : number };
+
+export type Products = Product [];
+
+@Component ( { selector: 'app-product-list' } )
+
+export class ProductListComponent
+{
+    public static readonly AddProductToCart : string = 'AddProductToCart';
+
+    constructor ( private notificationCenter : NotificationCenterService )
+    {
     }
 
-    ngOnDestroy () : void
+    public onClickEventHandler ( product : Product ) : void
     {
-        // ALWAYS USE THIS FORM OF THE removeObserver METHOD HERE. IN ngOnDestroy ().
-        this._notificationCenter_.removeObserver ( this );
+        const userInfo : UserInfo = {};
 
-        // Use this form of the removeObserver method to stop listening to a specic
-        // message no matter which component sends it.
-        this._notificationCenter_.removeObserver ( this,
-                                                   MessagingClassComponent.MESSAGE_CONSTANT );
+        userInfo [ 'product' ] = { name     : product.name,
+                                   price    : product.price,
+                                   quantity : product.quantity };
 
-        // Use this form of the removeObserver method to stop listening to a specific
-        // message being sent from a specific sender.
-        this._notificationCenter_.removeObserver ( this,
-                                                   MessagingClassComponent.MESSAGE_CONSTANT,
-                                                   notifyingClassRef );
-
-        // Use this form of the removeObserver method to stop listening to any message
-        // being sent from a specific sender.
-        this._notificationCenter_.removeObserver ( this,
-                                                   null,
-                                                   notifyingClassRef );
+        this.notificationCenter.postNotification ( 'AddProductToCart',
+                                                   this,
+                                                   userInfo );
     }
+}
+```
 
-    ngOnInit () : void
+```typescript
+import { Component, Input } from "@angular/core";
+import { Notification,
+         NotificationCenterService } from "@jtablada/notification-center";
+import { Product, Products, ProductListComponent } from "./product-list.component";
+
+@Component ( { selector : 'app-shopping-cart' } )
+
+export class ShoppingCartComponent implements OnDestroy
+{
+    @Input ( 'products' ) productsRef : ElementRef;
+
+    private cartItems : Products;
+
+    constructor ( private notificationCenter : NotificationCenter )
     {
-        // Use this form to receive any notification irrespective of the sender.
-        this._notificationCenter_.addObserver ( this,
-                                                this.notificationHandler.bind ( this ) );
-
-        // Use this form to receive a specific notification from any sender.
-        // Multiple instances of a component may send the same notification.
-        this._notificationCenter_.addObserver ( this,
-                                                this.notificationHandler.bind ( this ),
-                                                MessagingClassComponent.MESSAGE_CONSTANT );
-
-        // Use this form to receive a specific notification from a specific sender.
-        this._notificationCenter_.addObserver ( this,
-                                                this.notificationHandler.bind ( this ),
-                                                MessagingClassComponent.MESSAGE_CONSTANT,
-                                                notifyingClassRef );
-
-        // Use this form to receive any notification posted by a specific sender.
-        this._notificationCenter_.addObserver ( this,
-                                                this.notificationHandler.bind ( this ),
-                                                null,
-                                                notifyingClassRef );
+        this.cartItems = [];
+        this.notificationCenter.addObserver ( this,
+                                              this.notificationHandler.bind ( this ),
+                                              ProductListComponent.AddProductToCart,
+                                              this.productsRef );
     }
 
     public notificationHandler ( notification : Notification ) : void
     {
+        const userInfo : UserInfo = notification.userInfo;
+        const product  : Product  = userInfo [ 'product' ];
+
+        this.cartItems.push ( product );
     }
 }
 ```
 
-### messaging-class.component.ts
+### Removing observer from `NotificationCenterService`
 ```typescript
-import { Component } from "@angular/core";
-import { NotificatonCenterService,
-         UserInfo } from "@jtablada/notification-center";
+@import { OnDestroy } from "@angular/core";
+@import { Notification,
+          NotificationCenterService } from "@jtablada/notification-center";
+```
 
-@Component ( { selector: 'app-messaging-class',
-               templateUrl: './app-messaging-class.html',
-               styleUrls: [ './app-messaging-class.css' ] } )
-
-export class MessagingClassComponent
+```typescript
+constructor ( private notificationCenter : NotificationCenterService )
 {
-    public static readonly MESSAGE_CONSTANT : string = '_MESSAGE_CONSTANT_';
-
-    private _notificationCenter_ : NotificationCenterService;
-
-    constructor ( notificationCenter : NotificationCenterService )
-    {
-        this._notificationCenter_ = notificationCenter;
-    }
-
-    public someMethod () : void
-    {
-        // Use this form to send a packaged notification object.
-        const notification : Notification = { name   : MessagingClassComponent.MESSAGE_CONSTANT,
-                                              sender : this };
-
-        this._notificationCenter.postNotification ( notification );
-
-        // Use this form to send custom data within the packaged notification.
-        const userInfo : UserInfo = { 'age'    : 25,
-                                      'address': '123 Main Street',
-                                      'list'   : [ 'a', 'b', 'c' ] };
-
-        notification = { name     : MessagingClassComponent.MESSAGE_CONSTANT,
-                         sender   : this,
-                         userInfo : userInfo };
-
-        this._notificationCenter_.postNotification ( notification );
-
-        this._notificationCenter_.postNotification ( MessagingClassComponent.MESSAGE_CONSTANT,
-                                                     this );
-
-        this._notificationCenter_.postNotification ( MessagingClassComponent.MESSAGE_CONSTANT,
-                                                     this,
-                                                     userInfo );
-    }
 }
 ```
 
-### container-class.html
-```html
-<app-messaging-class #messagingComponent></app-messaging-class>
-
-<app-observing-class [notifying-class]="messagingComponent"></app-observing-class>
+```typescript
+ngOnDestroy () : void
+{
+  // ALWAYS -- Use this form inside ngOnDestroy()
+  this.notificationCenter.removeObserver ( this );
+}
 ```
+
+```typescript
+public startObservingEvents () : void
+{
+    this.notificationCenter.addObserver ( this,
+                                          this.serverDidFailNotificationHandler.bind ( this ),
+                                          'ServerDidFailNotification' );
+    
+    this.notificationCenter.addObserver ( this,
+                                          this.serverDidLoadInfoNotificationHandler.bind ( this),
+                                          'ServerDidLoadInfoNotification' );
+}
+
+public stopObservingEvents () : void
+{
+    this.notificationCenter.removeObserver ( this,
+                                             'ServerDidFailNotification' );
+   
+    this.notificationCenter.removeObserver ( this,
+                                             'ServerDidLoadInfoNotification' );
+}
+```
+
+```typescript
+public onClickEventHandler () : void
+{
+    this.startObservingEvents ();
+    
+    // Make the necessary server request to load data.
+}
+```
+
+```typescript
+public serverDidFailNotificationHandler ( notification : Notification ) : void
+{
+    this.stopObservingEvents ();
+    
+    // Handle failure here.
+}
+
+public serverDidLoadInfoNotificationHandler ( notification : Notification ) : void
+{
+    this.stopObservingEvents ();
+    
+    // Handle results sent by the server here...
+}
+```
+
+
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[The MIT License](https://choosealicense.com/licenses/mit/) <br>
+Copyright &copy; 2021 Johnny Alexander Tablada-Rodríguez [alexandertablada@hotmail.com](mailto:alexandertablada@hotmal.com). <br>
+&reg; All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
