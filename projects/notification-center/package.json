@@ -11,6 +11,10 @@
     "description": "A notification dispatch mechanism which enables the broadcast of information to registered observers.",
     "license": "MIT",
     "private": false,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/milonghetto/notification-center"
+    },
     "keywords": [
         "angular",
         "javascript",
