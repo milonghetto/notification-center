@@ -451,7 +451,8 @@
                   publishers.forEach ( removePublisher );
                   
                   if ( 0 === publishers.length )
-                      delete this._emitters_ [ name! ];
+                      if ( undefined !== name && null !== name )
+                          delete this._emitters_ [ name ];
               }
           }
       }
