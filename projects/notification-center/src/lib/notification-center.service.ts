@@ -431,14 +431,17 @@
                   index = this._subscribersToOneByAny_.findIndex ( findSubscriber );
               }
               
-              const publishers : Publishers | undefined = this._emitters_ [ name! ];
-              
-              if ( undefined !== publishers )
+              if ( undefined !== name && null !== name )
               {
-                  publishers.forEach ( removePublisher );
-                  
-                  if ( 0 === publishers.length )
-                      delete this._emitters_ [ name! ];
+                  const publishers: Publishers | undefined = this._emitters_ [ name ];
+    
+                  if ( undefined !== publishers )
+                  {
+                      publishers.forEach ( removePublisher );
+        
+                      if ( 0 === publishers.length )
+                          delete this._emitters_ [ name ];
+                  }
               }
           }
           
