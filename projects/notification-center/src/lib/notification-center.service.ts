@@ -196,7 +196,7 @@
                                                     subscriber.sender     === sender ) );
                                      };
     
-              for ( let key in this._emitters_ )
+              for ( const key in this._emitters_ )
                   this._emitters_ [ key ].forEach ( subscribe );
               
               if ( noSpecificMessage && specificSender )
@@ -391,7 +391,7 @@
               remove_observer ( this._subscribersToAnyByOne_ );
               remove_observer ( this._subscribersToOneByAny_ );
 
-              for ( let key in this._emitters_ )
+              for ( const key in this._emitters_ )
               {
                   this._emitters_ [ key ].forEach ( removePublisher );
                   
@@ -411,7 +411,7 @@
                   index = this._subscribersToAnyByOne_.findIndex ( findSubscriber );
               }
               
-              for ( let key in this._emitters_ )
+              for ( const key in this._emitters_ )
               {
                   this._emitters_ [ key ].forEach ( removePublisher );
                   
