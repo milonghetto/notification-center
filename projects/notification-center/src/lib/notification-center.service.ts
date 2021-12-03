@@ -42,7 +42,6 @@
    export interface Emitters { [ index : string ] : Publishers }
 
 // ***********************************************************************************************************
-//
 
    @Injectable ( { providedIn : 'root' } )
 
@@ -54,7 +53,7 @@
        private readonly _subscribersToOneByAny_ : Subscribers;
 
    // ========================================================================================================
-      
+
       constructor ()
       {
           this._emitters_              = {};
