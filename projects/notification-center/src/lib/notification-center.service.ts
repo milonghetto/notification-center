@@ -237,12 +237,12 @@
           }
           else
           {
-              notification         = { name     : notificationName,
-                                       sender   : notificationSender,
-                                       userInfo : notificationUserInfo };
               [ notificationName,
                 notificationSender,
                 notificationUserInfo ] = arguments;
+              notification             = { name     : notificationName,
+                                           sender   : notificationSender,
+                                           userInfo : notificationUserInfo };
           }
           
           if ( this._subscribersToOneByAny_.length > 0 )
