@@ -369,12 +369,13 @@
                                      subArray   : Subscribers ) : void =>
                                    {
                                        if ( subscriber.observer === observer )
-                                       {
-                                           const subscription : Subscription = subscriber.subscription!;
-                                           
-                                           subscription.unsubscribe ();
-                                       }
+                                           if ( undefined !== subscriber.subscription )
+                                           {
+                                               const { subscription } = subscriber;
+    
+                                               subscription.unsubscribe ();
                                                subArray.splice ( subIndex, DELETE_COUNT );
+                                           }
                                    };
           
           if ( noSpecificMessage && noSpecificSender ) // CASE I
