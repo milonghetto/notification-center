@@ -251,7 +251,7 @@
                                            userInfo : notificationUserInfo };
           }
           
-          if ( this._subscribersToOneByAny_.length > 0 )
+          if ( this._subscribersToOneByAny_.length > NO_LENGTH )
               this._subscribersToOneByAny_.forEach ( ( subscriber : Subscriber ) : void =>
                                                      {
                                                          if ( subscriber.name === notificationName )
@@ -261,7 +261,7 @@
                                                                                 notificationSender );
                                                      } ) ;
           
-          if ( this._subscribersToAnyByOne_.length > 0 )
+          if ( this._subscribersToAnyByOne_.length > NO_LENGTH )
               this._subscribersToAnyByOne_.forEach ( ( subscriber : Subscriber ) : void =>
                                                      {
                                                          if ( subscriber.sender === notificationSender )
@@ -271,7 +271,7 @@
                                                                                 subscriber.sender );
                                                      } );
 
-          if ( this._subscribersToAnyByAny_.length > 0 )
+          if ( this._subscribersToAnyByAny_.length > NO_LENGTH )
               this._subscribersToAnyByAny_.forEach ( ( subscriber : Subscriber ) : void =>
                                                      {
                                                          this.addObserver ( subscriber.observer,
