@@ -299,11 +299,14 @@
    // ========================================================================================================
       
       public removeObserver ( observer : Object ) : void;
+      
       public removeObserver ( observer : Object,
                               name     : string | null ) : void;
+      
       public removeObserver ( observer : Object,
                               name     : string | null,
                               sender   : Object | null ) : void;
+      
       public removeObserver ( observer : Object,
                               name    ?: string | null,
                               sender  ?: Object | null ) : void
@@ -316,8 +319,6 @@
           const findSubscriber = ( subscriber : Subscriber ) : boolean =>
                                  {
                                      const CASE_I : boolean = ( noSpecificMessage && noSpecificSender ) &&
-                                                              // subscriber.name     === undefined &&
-                                                              // subscriber.sender   === undefined &&
                                                               subscriber.observer === observer;
                                      
                                      const CASE_II : boolean = ( noSpecificMessage && specificSender ) &&
