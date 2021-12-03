@@ -443,18 +443,18 @@
           }
           
           if ( specificMessage && specificSender ) // CASE IV
-          {
-              const publishers : Publishers | undefined = this._emitters_ [ name! ];
-              
-              if ( undefined !== publishers )
+              if ( undefined !== name && null !== name )
               {
-                  publishers.forEach ( removePublisher );
+                  const publishers : Publishers | undefined = this._emitters_ [ name ];
                   
-                  if ( 0 === publishers.length )
-                      if ( undefined !== name && null !== name )
+                  if ( undefined !== publishers )
+                  {
+                      publishers.forEach ( removePublisher );
+                      
+                      if ( 0 === publishers.length )
                           delete this._emitters_ [ name ];
+                  }
               }
-          }
       }
     
    // ========================================================================================================
