@@ -351,7 +351,7 @@
     
                                       if ( CASE_I_III || CASE_II_IV )
                                       {
-                                          const subscribers = publisher.subscribers;
+                                          const { subscribers } = publisher;
         
                                           subscribers.forEach ( removeSubscriber );
         
