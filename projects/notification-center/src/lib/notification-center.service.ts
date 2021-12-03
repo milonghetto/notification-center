@@ -16,20 +16,22 @@
    const DELETE_COUNT:    number =  1;
    const INDEX_NOT_FOUND: number = -1;
    const NO_LENGTH:       number =  0;
+   
+   export type ObjectType = Record <string, unknown>;
 
    export interface UserInfo { [ key : string ] : boolean | number | string | object }
 
    export interface Notification { name      : string,
-                                   sender    : Object,
+                                   sender    : ObjectType,
                                    userInfo ?: UserInfo | null }
 
    export type NotificationSubject = Subject <Notification>;
 
    export type NotificationHandler = ( notification : Notification ) => void;
 
-   export type Sender = Object | null;
+   export type Sender = ObjectType | null;
 
-   export type Subscriber = { observer      : Object;
+   export type Subscriber = { observer      : ObjectType;
                               name         ?: string;
                               handler      ?: NotificationHandler;
                               sender       ?: Sender;
@@ -80,16 +82,16 @@
        
    // ========================================================================================================
     
-      public addObserver ( observer            : Object,
+      public addObserver ( observer            : ObjectType,
                            notificationHandler : NotificationHandler ) : void;
-      public addObserver ( observer            : Object,
+      public addObserver ( observer            : ObjectType,
                            notificationHandler : NotificationHandler,
                            name                : string | null ) : void;
-      public addObserver ( observer            : Object,
+      public addObserver ( observer            : ObjectType,
                            notificationHandler : NotificationHandler,
                            name                : string | null,
                            sender              : Sender ) : void;
-      public addObserver ( observer            : Object,
+      public addObserver ( observer            : ObjectType,
                            notificationHandler : NotificationHandler,
                            name               ?: string | null,
                            sender             ?: Sender ) : void
@@ -220,17 +222,17 @@
       
       public postNotification ( notification : Notification ) : void;
       public postNotification ( name   : string,
-                                sender : Object ) : void;
+                                sender : ObjectType ) : void;
       public postNotification ( name     : string,
-                                sender   : Object,
+                                sender   : ObjectType,
                                 userInfo : UserInfo | null ) : void;
       public postNotification ( argument1 : Notification | string,
-                                sender   ?: Object,
+                                sender   ?: ObjectType,
                                 userInfo ?: UserInfo | null ) : void
       {
           let notification         : Notification;
           let notificationName     : string;
-          let notificationSender   : Object;
+          let notificationSender   : ObjectType;
           let notificationUserInfo : UserInfo | undefined | null;
           
           if ( "object" === typeof arguments [ 0 ] )
@@ -298,18 +300,18 @@
       
    // ========================================================================================================
       
-      public removeObserver ( observer : Object ) : void;
+      public removeObserver ( observer : ObjectType ) : void;
       
-      public removeObserver ( observer : Object,
+      public removeObserver ( observer : ObjectType,
                               name     : string | null ) : void;
       
-      public removeObserver ( observer : Object,
+      public removeObserver ( observer : ObjectType,
                               name     : string | null,
-                              sender   : Object | null ) : void;
+                              sender   : ObjectType | null ) : void;
       
-      public removeObserver ( observer : Object,
+      public removeObserver ( observer : ObjectType,
                               name    ?: string | null,
-                              sender  ?: Object | null ) : void
+                              sender  ?: ObjectType | null ) : void
       {
           const noSpecificMessage : boolean = ( undefined === name   || null === name   );
           const noSpecificSender  : boolean = ( undefined === sender || null === sender );
