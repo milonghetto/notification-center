@@ -1,12 +1,14 @@
-// ***********************************************************************************************************
-//
-// Author: Johnny Alexander Tablada-Rodriguez
-// Created On: Friday, 20 August, 2021
-// File: notification-center.service.ts
-// Project: notification-center-service
-// Notice: Copyright (c) 2021.  (R)All rights reserved.
-//
-// ***********************************************************************************************************
+/*
+ * ***********************************************************************************************************
+ *
+ * Author: Johnny Alexander Tablada-Rodriguez
+ * Created On: Friday, 20 August, 2021
+ * File: notification-center.service.ts
+ * Project: notification-center-service
+ * Notice: Copyright (c) 2021.  (R)All rights reserved.
+ *
+ * ***********************************************************************************************************
+ */
 
    import { Injectable }            from "@angular/core";
    import { Subject, Subscription } from "rxjs";
