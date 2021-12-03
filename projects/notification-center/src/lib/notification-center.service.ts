@@ -12,6 +12,10 @@
 
    import { Injectable }            from '@angular/core';
    import { Subject, Subscription } from 'rxjs';
+   
+   const DELETE_COUNT:    number =  1;
+   const INDEX_NOT_FOUND: number = -1;
+   const NO_LENGTH:       number =  0;
 
    export interface UserInfo { [ key : string ] : boolean | number | string | object }
 
@@ -355,8 +359,8 @@
         
                                           subscribers.forEach ( removeSubscriber );
         
-                                          if ( 0 === subscribers.length )
-                                              pubArray.splice ( pubIndex, 1 );
+                                          if ( NO_LENGTH === subscribers.length )
+                                              pubArray.splice ( pubIndex, DELETE_COUNT );
                                       }
                                   };
           
@@ -369,8 +373,8 @@
                                            const subscription : Subscription = subscriber.subscription!;
                                            
                                            subscription.unsubscribe ();
-                                           subArray.splice ( subIndex, 1 );
                                        }
+                                               subArray.splice ( subIndex, DELETE_COUNT );
                                    };
           
           if ( noSpecificMessage && noSpecificSender ) // CASE I
@@ -379,9 +383,9 @@
                                       {
                                           let index : number = subscribers.findIndex ( findSubscriber );
                                           
-                                          while ( -1 !== index )
+                                          while ( INDEX_NOT_FOUND !== index )
                                           {
-                                              subscribers.splice ( index, 1 );
+                                              subscribers.splice ( index, DELETE_COUNT );
                                               
                                               index = subscribers.findIndex ( findSubscriber );
                                           }
@@ -395,7 +399,7 @@
               {
                   this._emitters_ [ key ].forEach ( removePublisher );
                   
-                  if ( 0 === this._emitters_ [ key ].length )
+                  if ( NO_LENGTH === this._emitters_ [ key ].length )
                       delete this._emitters_ [ key ];
               }
           }
@@ -404,9 +408,9 @@
           {
               let index : number = this._subscribersToAnyByOne_.findIndex ( findSubscriber );
               
-              while ( -1 !== index )
+              while ( INDEX_NOT_FOUND !== index )
               {
-                  this._subscribersToAnyByOne_.splice ( index, 1 );
+                  this._subscribersToAnyByOne_.splice ( index, DELETE_COUNT );
                   
                   index = this._subscribersToAnyByOne_.findIndex ( findSubscriber );
               }
@@ -415,7 +419,7 @@
               {
                   this._emitters_ [ key ].forEach ( removePublisher );
                   
-                  if ( 0 === this._emitters_ [ key ].length )
+                  if ( NO_LENGTH === this._emitters_ [ key ].length )
                       delete this._emitters_ [ key ];
               }
           }
@@ -424,9 +428,9 @@
           {
               let index = this._subscribersToOneByAny_.findIndex ( findSubscriber );
               
-              while ( -1 !== index )
+              while ( INDEX_NOT_FOUND !== index )
               {
-                  this._subscribersToOneByAny_.splice ( index, 1 );
+                  this._subscribersToOneByAny_.splice ( index, DELETE_COUNT );
                   
                   index = this._subscribersToOneByAny_.findIndex ( findSubscriber );
               }
@@ -439,7 +443,7 @@
                   {
                       publishers.forEach ( removePublisher );
         
-                      if ( 0 === publishers.length )
+                      if ( NO_LENGTH === publishers.length )
                           delete this._emitters_ [ name ];
                   }
               }
@@ -454,7 +458,7 @@
                   {
                       publishers.forEach ( removePublisher );
                       
-                      if ( 0 === publishers.length )
+                      if ( NO_LENGTH === publishers.length )
                           delete this._emitters_ [ name ];
                   }
               }
