@@ -285,7 +285,7 @@
     
               if ( undefined !== publisher )
               {
-                  const subject : NotificationSubject = publisher.subject;
+                  const { subject } = publisher;
         
                   subject.next ( notification );
               }
