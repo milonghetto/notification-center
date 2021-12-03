@@ -10,8 +10,8 @@
  * ***********************************************************************************************************
  */
 
-   import { Injectable }            from "@angular/core";
-   import { Subject, Subscription } from "rxjs";
+   import { Injectable }            from '@angular/core';
+   import { Subject, Subscription } from 'rxjs';
 
    export interface UserInfo { [ key : string ] : boolean | number | string | object }
 
