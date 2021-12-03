@@ -229,7 +229,7 @@
           let notificationSender   : Object;
           let notificationUserInfo : UserInfo | undefined | null;
           
-          if ( typeof arguments [ 0 ] === "object" )
+          if ( "object" === typeof arguments [ 0 ] )
           {
               notification       = arguments [ 0 ];
               notificationName   = notification.name;
