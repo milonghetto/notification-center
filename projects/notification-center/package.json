@@ -1,6 +1,6 @@
 {
     "name": "@jtablada/notification-center",
-    "version": "1.0.6",
+    "version": "1.0.8",
     "author": "Johnny Alexander Tablada-Rodríguez",
     "contributors": [
         {
@@ -70,8 +70,8 @@
     ],
     "main": "src/notification-center.service.ts",
     "peerDependencies": {
-        "@angular/common": "^12.0.5",
-        "@angular/core": "^12.0.5"
+        "@angular/common": "^13.3.11",
+        "@angular/core": "^13.3.11"
     },
     "dependencies": {
         "tslib": "^2.1.0"

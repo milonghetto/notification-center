@@ -1,29 +1,37 @@
-// ***********************************************************************************************************
-//
-// Author: Johnny Alexander Tablada-Rodriguez
-// Created On: Friday, 20 August, 2021
-// File: notification-center.service.ts
-// Project: notification-center-service
-// Notice: Copyright (c) 2021.  (R)All rights reserved.
-//
-// ***********************************************************************************************************
+/*
+ * ***********************************************************************************************************
+ *
+ * Author: Johnny Alexander Tablada-Rodriguez
+ * Created On: Friday, 20 August, 2021
+ * File: notification-center.service.ts
+ * Project: notification-center-service
+ * Notice: Copyright (c) 2021.  (R)All rights reserved.
+ *
+ * ***********************************************************************************************************
+ */
 
-   import { Injectable }            from "@angular/core";
-   import { Subject, Subscription } from "rxjs";
+   import { Injectable }            from '@angular/core';
+   import { Subject, Subscription } from 'rxjs';
+   
+   const DELETE_COUNT:    number =  1;
+   const INDEX_NOT_FOUND: number = -1;
+   const NO_LENGTH:       number =  0;
+   
+   export type ObjectType = Record <string, unknown>;
 
    export interface UserInfo { [ key : string ] : boolean | number | string | object }
 
    export interface Notification { name      : string,
-                                   sender    : Object,
+                                   sender    : ObjectType,
                                    userInfo ?: UserInfo | null }
 
    export type NotificationSubject = Subject <Notification>;
 
    export type NotificationHandler = ( notification : Notification ) => void;
 
-   export type Sender = Object | null;
+   export type Sender = ObjectType | null;
 
-   export type Subscriber = { observer      : Object;
+   export type Subscriber = { observer      : ObjectType;
                               name         ?: string;
                               handler      ?: NotificationHandler;
                               sender       ?: Sender;
@@ -40,7 +48,6 @@
    export interface Emitters { [ index : string ] : Publishers }
 
 // ***********************************************************************************************************
-//
 
    @Injectable ( { providedIn : 'root' } )
 
@@ -52,7 +59,7 @@
        private readonly _subscribersToOneByAny_ : Subscribers;
 
    // ========================================================================================================
-      
+
       constructor ()
       {
           this._emitters_              = {};
@@ -75,16 +82,16 @@
        
    // ========================================================================================================
     
-      public addObserver ( observer            : Object,
+      public addObserver ( observer            : ObjectType,
                            notificationHandler : NotificationHandler ) : void;
-      public addObserver ( observer            : Object,
+      public addObserver ( observer            : ObjectType,
                            notificationHandler : NotificationHandler,
                            name                : string | null ) : void;
-      public addObserver ( observer            : Object,
+      public addObserver ( observer            : ObjectType,
                            notificationHandler : NotificationHandler,
                            name                : string | null,
                            sender              : Sender ) : void;
-      public addObserver ( observer            : Object,
+      public addObserver ( observer            : ObjectType,
                            notificationHandler : NotificationHandler,
                            name               ?: string | null,
                            sender             ?: Sender ) : void
@@ -195,7 +202,7 @@
                                                     subscriber.sender     === sender ) );
                                      };
     
-              for ( let key in this._emitters_ )
+              for ( const key in this._emitters_ )
                   this._emitters_ [ key ].forEach ( subscribe );
               
               if ( noSpecificMessage && specificSender )
@@ -215,20 +222,20 @@
       
       public postNotification ( notification : Notification ) : void;
       public postNotification ( name   : string,
-                                sender : Object ) : void;
+                                sender : ObjectType ) : void;
       public postNotification ( name     : string,
-                                sender   : Object,
+                                sender   : ObjectType,
                                 userInfo : UserInfo | null ) : void;
       public postNotification ( argument1 : Notification | string,
-                                sender   ?: Object,
+                                sender   ?: ObjectType,
                                 userInfo ?: UserInfo | null ) : void
       {
           let notification         : Notification;
           let notificationName     : string;
-          let notificationSender   : Object;
+          let notificationSender   : ObjectType;
           let notificationUserInfo : UserInfo | undefined | null;
           
-          if ( typeof arguments [ 0 ] === "object" )
+          if ( "object" === typeof arguments [ 0 ] )
           {
               notification       = arguments [ 0 ];
               notificationName   = notification.name;
@@ -236,41 +243,44 @@
           }
           else
           {
-              notificationName     = arguments [ 0 ];
-              notificationSender   = arguments [ 1 ];
-              notificationUserInfo = arguments [ 2 ];
-              notification         = { name     : notificationName,
-                                       sender   : notificationSender,
-                                       userInfo : notificationUserInfo };
+              [ notificationName,
+                notificationSender,
+                notificationUserInfo ] = arguments;
+              notification             = { name     : notificationName,
+                                           sender   : notificationSender,
+                                           userInfo : notificationUserInfo };
           }
           
-          if ( this._subscribersToOneByAny_.length > 0 )
+          if ( this._subscribersToOneByAny_.length > NO_LENGTH )
               this._subscribersToOneByAny_.forEach ( ( subscriber : Subscriber ) : void =>
                                                      {
                                                          if ( subscriber.name === notificationName )
-                                                             this.addObserver ( subscriber.observer,
-                                                                                subscriber.handler!,
-                                                                                notificationName,
-                                                                                notificationSender );
+                                                             if ( undefined !== subscriber.handler &&  null !== subscriber.handler )
+                                                                 this.addObserver ( subscriber.observer,
+                                                                                    subscriber.handler,
+                                                                                    notificationName,
+                                                                                    notificationSender );
                                                      } ) ;
           
-          if ( this._subscribersToAnyByOne_.length > 0 )
+          if ( this._subscribersToAnyByOne_.length > NO_LENGTH )
               this._subscribersToAnyByOne_.forEach ( ( subscriber : Subscriber ) : void =>
                                                      {
                                                          if ( subscriber.sender === notificationSender )
-                                                             this.addObserver ( subscriber.observer,
-                                                                                subscriber.handler!,
-                                                                                notificationName,
-                                                                                subscriber.sender );
+                                                             if ( undefined !== subscriber.handler && null !== subscriber.handler )
+                                                                 this.addObserver ( subscriber.observer,
+                                                                                    subscriber.handler,
+                                                                                    notificationName,
+                                                                                    subscriber.sender );
                                                      } );
 
-          if ( this._subscribersToAnyByAny_.length > 0 )
+          if ( this._subscribersToAnyByAny_.length > NO_LENGTH )
               this._subscribersToAnyByAny_.forEach ( ( subscriber : Subscriber ) : void =>
                                                      {
-                                                         this.addObserver ( subscriber.observer,
-                                                                            subscriber.handler!,
-                                                                            notificationName,
-                                                                            notificationSender );
+                                                         if ( undefined !== subscriber.handler && null !== subscriber.handler )
+                                                             this.addObserver ( subscriber.observer,
+                                                                                subscriber.handler,
+                                                                                notificationName,
+                                                                                notificationSender );
                                                      } );
           
           const findPublisher = ( publisher : Publisher ) : boolean =>
@@ -284,7 +294,7 @@
     
               if ( undefined !== publisher )
               {
-                  const subject : NotificationSubject = publisher.subject;
+                  const { subject } = publisher;
         
                   subject.next ( notification );
               }
@@ -293,15 +303,18 @@
       
    // ========================================================================================================
       
-      public removeObserver ( observer : Object ) : void;
-      public removeObserver ( observer : Object,
+      public removeObserver ( observer : ObjectType ) : void;
+      
+      public removeObserver ( observer : ObjectType,
                               name     : string | null ) : void;
-      public removeObserver ( observer : Object,
+      
+      public removeObserver ( observer : ObjectType,
                               name     : string | null,
-                              sender   : Object | null ) : void;
-      public removeObserver ( observer : Object,
+                              sender   : ObjectType | null ) : void;
+      
+      public removeObserver ( observer : ObjectType,
                               name    ?: string | null,
-                              sender  ?: Object | null ) : void
+                              sender  ?: ObjectType | null ) : void
       {
           const noSpecificMessage : boolean = ( undefined === name   || null === name   );
           const noSpecificSender  : boolean = ( undefined === sender || null === sender );
@@ -311,8 +324,6 @@
           const findSubscriber = ( subscriber : Subscriber ) : boolean =>
                                  {
                                      const CASE_I : boolean = ( noSpecificMessage && noSpecificSender ) &&
-                                                              // subscriber.name     === undefined &&
-                                                              // subscriber.sender   === undefined &&
                                                               subscriber.observer === observer;
                                      
                                      const CASE_II : boolean = ( noSpecificMessage && specificSender ) &&
@@ -350,12 +361,12 @@
     
                                       if ( CASE_I_III || CASE_II_IV )
                                       {
-                                          const subscribers = publisher.subscribers;
+                                          const { subscribers } = publisher;
         
                                           subscribers.forEach ( removeSubscriber );
         
-                                          if ( 0 === subscribers.length )
-                                              pubArray.splice ( pubIndex, 1 );
+                                          if ( NO_LENGTH === subscribers.length )
+                                              pubArray.splice ( pubIndex, DELETE_COUNT );
                                       }
                                   };
           
@@ -364,12 +375,13 @@
                                      subArray   : Subscribers ) : void =>
                                    {
                                        if ( subscriber.observer === observer )
-                                       {
-                                           const subscription : Subscription = subscriber.subscription!;
-                                           
-                                           subscription.unsubscribe ();
-                                           subArray.splice ( subIndex, 1 );
-                                       }
+                                           if ( undefined !== subscriber.subscription )
+                                           {
+                                               const { subscription } = subscriber;
+    
+                                               subscription.unsubscribe ();
+                                               subArray.splice ( subIndex, DELETE_COUNT );
+                                           }
                                    };
           
           if ( noSpecificMessage && noSpecificSender ) // CASE I
@@ -378,9 +390,9 @@
                                       {
                                           let index : number = subscribers.findIndex ( findSubscriber );
                                           
-                                          while ( -1 !== index )
+                                          while ( INDEX_NOT_FOUND !== index )
                                           {
-                                              subscribers.splice ( index, 1 );
+                                              subscribers.splice ( index, DELETE_COUNT );
                                               
                                               index = subscribers.findIndex ( findSubscriber );
                                           }
@@ -390,11 +402,11 @@
               remove_observer ( this._subscribersToAnyByOne_ );
               remove_observer ( this._subscribersToOneByAny_ );
 
-              for ( let key in this._emitters_ )
+              for ( const key in this._emitters_ )
               {
                   this._emitters_ [ key ].forEach ( removePublisher );
                   
-                  if ( 0 === this._emitters_ [ key ].length )
+                  if ( NO_LENGTH === this._emitters_ [ key ].length )
                       delete this._emitters_ [ key ];
               }
           }
@@ -403,18 +415,18 @@
           {
               let index : number = this._subscribersToAnyByOne_.findIndex ( findSubscriber );
               
-              while ( -1 !== index )
+              while ( INDEX_NOT_FOUND !== index )
               {
-                  this._subscribersToAnyByOne_.splice ( index, 1 );
+                  this._subscribersToAnyByOne_.splice ( index, DELETE_COUNT );
                   
                   index = this._subscribersToAnyByOne_.findIndex ( findSubscriber );
               }
               
-              for ( let key in this._emitters_ )
+              for ( const key in this._emitters_ )
               {
                   this._emitters_ [ key ].forEach ( removePublisher );
                   
-                  if ( 0 === this._emitters_ [ key ].length )
+                  if ( NO_LENGTH === this._emitters_ [ key ].length )
                       delete this._emitters_ [ key ];
               }
           }
@@ -423,36 +435,40 @@
           {
               let index = this._subscribersToOneByAny_.findIndex ( findSubscriber );
               
-              while ( -1 !== index )
+              while ( INDEX_NOT_FOUND !== index )
               {
-                  this._subscribersToOneByAny_.splice ( index, 1 );
+                  this._subscribersToOneByAny_.splice ( index, DELETE_COUNT );
                   
                   index = this._subscribersToOneByAny_.findIndex ( findSubscriber );
               }
               
-              const publishers : Publishers | undefined = this._emitters_ [ name! ];
-              
-              if ( undefined !== publishers )
+              if ( undefined !== name && null !== name )
               {
-                  publishers.forEach ( removePublisher );
-                  
-                  if ( 0 === publishers.length )
-                      delete this._emitters_ [ name! ];
+                  const publishers: Publishers | undefined = this._emitters_ [ name ];
+    
+                  if ( undefined !== publishers )
+                  {
+                      publishers.forEach ( removePublisher );
+        
+                      if ( NO_LENGTH === publishers.length )
+                          delete this._emitters_ [ name ];
+                  }
               }
           }
           
           if ( specificMessage && specificSender ) // CASE IV
-          {
-              const publishers : Publishers | undefined = this._emitters_ [ name! ];
-              
-              if ( undefined !== publishers )
+              if ( undefined !== name && null !== name )
               {
-                  publishers.forEach ( removePublisher );
+                  const publishers : Publishers | undefined = this._emitters_ [ name ];
                   
-                  if ( 0 === publishers.length )
-                      delete this._emitters_ [ name! ];
+                  if ( undefined !== publishers )
+                  {
+                      publishers.forEach ( removePublisher );
+                      
+                      if ( NO_LENGTH === publishers.length )
+                          delete this._emitters_ [ name ];
+                  }
               }
-          }
       }
     
    // ========================================================================================================
